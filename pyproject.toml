@@ -1,0 +1,11 @@
+[tool.poetry]
+name = "photo-archiver"
+version = "0.1.0"
+description = "Photo organization and deduplication tool"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"

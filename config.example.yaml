@@ -1,0 +1,7 @@
+# Example configuration for photo-archiver
+source_dirs:
+  - ./photos
+destination: ./sorted
+date_sources:
+  - exif
+  - filename
