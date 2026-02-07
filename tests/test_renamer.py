@@ -7,17 +7,15 @@ from photo_tool.models import DateTimeSource
 from photo_tool.renamer import generate_filename
 
 
-def _parse_base_filename(base: str) -> tuple[datetime, DateTimeSource]:
+def _parse_base_filename(base: str) -> datetime:
     stem = Path(base).stem
     parts = stem.split("_")
     date_part = parts[0]
     time_part = parts[1]
-    source_part = parts[2]
     resolved_datetime = datetime.strptime(
         f"{date_part}_{time_part}", "%Y-%m-%d_%H-%M-%S"
     )
-    source = DateTimeSource(source_part)
-    return resolved_datetime, source
+    return resolved_datetime
 
 
 def test_generate_filename_with_collisions():
@@ -25,11 +23,11 @@ def test_generate_filename_with_collisions():
     payload = yaml.safe_load(cases_path.read_text(encoding="utf-8"))
 
     for case in payload["cases"]:
-        resolved_datetime, source = _parse_base_filename(case["base"])
+        resolved_datetime = _parse_base_filename(case["base"])
         result = generate_filename(
             original_name=case["base"],
             resolved_datetime=resolved_datetime,
-            source=source,
+            source=DateTimeSource.EXIF,
             existing_names=case["existing"],
         )
         assert result == case["expected"]
@@ -43,4 +41,4 @@ def test_generate_filename_uses_source_and_extension():
         existing_names=[],
     )
 
-    assert result == "2023-08-01_10-15-30_filename.heic"
+    assert result == "2023-08-01_10-15-30.heic"

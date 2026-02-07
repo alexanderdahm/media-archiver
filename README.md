@@ -57,7 +57,13 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 
-3) Install dependencies
+3) Install the project (including CLI)
+
+```powershell
+pip install -e .
+```
+
+Optional dev dependencies (tests, tooling):
 
 ```powershell
 pip install -e .[dev]
@@ -65,17 +71,40 @@ pip install -e .[dev]
 
 ## Usage
 
-Dry-run (default):
+After installing the project, the CLI is available as `photo-tool`.
+
+### Dry-Run (default, recommended)
 
 ```powershell
-photo-tool run --config config.yaml
+photo-tool --config config.yaml
 ```
 
-Apply changes:
+This will scan, analyze, and report all actions without modifying any files.
+
+### Apply changes
 
 ```powershell
-photo-tool run --config config.yaml --apply
+photo-tool --config config.yaml --apply
 ```
+
+Changes are only applied if:
+
+- `--apply` is provided AND
+- `behavior.dry_run` is set to `false` in the config
+
+---
+
+## 🧠 Entwickler-Hinweis (sehr empfohlen)
+
+### Development Usage
+
+During development, the CLI can also be invoked via:
+
+```powershell
+python -m photo_tool.cli --config config.yaml
+```
+
+Both commands execute the same code path.
 
 ## Configuration
 

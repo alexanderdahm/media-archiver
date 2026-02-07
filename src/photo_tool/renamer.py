@@ -17,7 +17,7 @@ def _format_base_name(
     if not extension:
         extension = ""
     timestamp = resolved_datetime.strftime("%Y-%m-%d_%H-%M-%S")
-    return f"{timestamp}_{source.value}{extension}"
+    return f"{timestamp}{extension}"
 
 
 def _apply_collision_suffix(base_name: str, existing: Iterable[str]) -> str:

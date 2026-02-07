@@ -15,3 +15,8 @@ naming:
 duplicates:
   detect: true
   mode: "report-only"
+
+reporting:
+  markdown: true # currently always enabled in v1.0
+  json: true # currently always enabled in v1.0
+  verbose: true # reserved for future use

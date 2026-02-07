@@ -66,9 +66,9 @@ def test_report_summary_counts_and_ordering():
     assert report.summary.skipped == 1
     assert report.summary.errors == 1
 
-    assert report.entries[0].source_path.endswith("A.jpg")
-    assert report.entries[1].source_path.endswith("B.jpg")
-    assert report.entries[2].source_path.endswith("C.jpg")
+    assert Path(report.entries[0].target_path).as_posix().endswith("12_Dezember/A.jpg")
+    assert Path(report.entries[1].target_path).as_posix().endswith("01_Januar/C.jpg")
+    assert Path(report.entries[2].target_path).as_posix().endswith("08_August/B.jpg")
 
 
 def test_markdown_and_json_are_deterministic():

@@ -77,7 +77,13 @@ def build_report(
             )
         )
 
-    entries.sort(key=lambda entry: entry.source_path)
+    entries.sort(
+        key=lambda entry: (
+            Path(entry.target_path).parent,
+            Path(entry.target_path).name,
+            entry.source_path,
+        )
+    )
 
     copied = sum(1 for e in entries if e.action == "copy" and e.performed)
     moved = sum(1 for e in entries if e.action == "move" and e.performed)
