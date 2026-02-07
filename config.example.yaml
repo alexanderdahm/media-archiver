@@ -11,7 +11,7 @@ behavior:
 naming:
   month_format: "MM_Month" # reserved, not active in v1.0
   filename_format: "YYYY-MM-DD_HH-mm-ss" # reserved, not active in v1.0
-  preserve_original_on_copy: false # if true, keep original filename when copying
+  preserve_original_filename: false # if true, keep original filename
 
 duplicates:
   detect: true # reserved, not active in v1.0

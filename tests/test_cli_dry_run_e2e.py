@@ -32,7 +32,7 @@ behavior:
 naming:
   month_format: "MM_Month"
   filename_format: "YYYY-MM-DD_HH-mm-ss"
-  preserve_original_on_copy: false
+  preserve_original_filename: false
 
 duplicates:
   detect: true

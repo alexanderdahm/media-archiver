@@ -25,7 +25,7 @@ class BehaviorConfig:
 class NamingConfig:
     month_format: str
     filename_format: str
-    preserve_original_on_copy: bool
+    preserve_original_filename: bool
 
 
 @dataclass(frozen=True)
@@ -92,8 +92,8 @@ def load_config(path: Path) -> AppConfig:
         naming = NamingConfig(
             month_format=_require(raw["naming"], "month_format"),
             filename_format=_require(raw["naming"], "filename_format"),
-            preserve_original_on_copy=bool(
-                _optional(raw["naming"], "preserve_original_on_copy", False)
+            preserve_original_filename=bool(
+                _optional(raw["naming"], "preserve_original_filename", False)
             ),
         )
 

@@ -96,7 +96,7 @@ def run_pipeline(config: AppConfig, apply: bool) -> tuple[Path | None, Path | No
         target_dir = config.paths.archive_root / f"{resolution.datetime.year:04d}" / month_folder
         existing_names = planned_names[target_dir]
 
-        if config.naming.preserve_original_on_copy:
+        if config.naming.preserve_original_filename:
             canonical_name = ensure_unique_name(
                 original_name=info.name,
                 existing_names=existing_names,
