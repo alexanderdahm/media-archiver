@@ -4,7 +4,7 @@ from pathlib import Path
 import yaml
 
 from photo_tool.models import DateTimeSource
-from photo_tool.renamer import generate_filename
+from photo_tool.renamer import ensure_unique_name, generate_filename
 
 
 def _parse_base_filename(base: str) -> datetime:
@@ -42,3 +42,12 @@ def test_generate_filename_uses_source_and_extension():
     )
 
     assert result == "2023-08-01_10-15-30.heic"
+
+
+def test_ensure_unique_name_keeps_original_and_handles_collisions():
+    result = ensure_unique_name(
+        original_name="IMG_0001.JPG",
+        existing_names=["IMG_0001.JPG"],
+    )
+
+    assert result == "IMG_0001_01.JPG"

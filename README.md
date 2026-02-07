@@ -45,19 +45,19 @@ Unsupported files are ignored and reported.
 
 This project uses a local virtual environment.
 
-1) Create a virtual environment
+1. Create a virtual environment
 
 ```powershell
 python -m venv .venv
 ```
 
-2) Activate it
+2. Activate it
 
 ```powershell
 .venv\Scripts\activate
 ```
 
-3) Install the project (including CLI)
+3. Install the project (including CLI)
 
 ```powershell
 pip install -e .
@@ -129,6 +129,26 @@ Reports include:
 - Errors
 
 Reports are timestamped and append-only.
+
+## Sorting Logic (How files are placed)
+
+The tool processes files through a deterministic pipeline and applies the same
+decisions for dry-run and apply runs. In short:
+
+1. Scan supported files from the configured `unsorted` folder.
+2. Resolve the capture datetime in this order:
+   - EXIF DateTimeOriginal
+   - Datetime parsed from filename
+   - Filesystem modified timestamp (fallback)
+3. Normalize the month folder name to the canonical German format.
+4. Generate the canonical filename:
+   `YYYY-MM-DD_HH-mm-ss.ext`
+5. Build the target path as:
+   `<archive_root>/<YYYY>/<MM_MonthName>/<canonical_filename>`
+6. Handle collisions deterministically by appending `_01`, `_02`, ...
+7. Execute copy/move only when `--apply` is used and `behavior.dry_run` is false.
+
+Dry-run runs the same logic but never writes files; it only generates reports.
 
 ## Project Structure
 

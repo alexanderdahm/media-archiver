@@ -3,7 +3,7 @@ from pathlib import Path
 from photo_tool.cli import main
 
 
-def test_cli_dry_run_creates_full_report(tmp_path: Path):
+def test_cli_apply_cleans_empty_unsorted_dirs(tmp_path: Path):
     archive = tmp_path / "archive"
     unsorted = tmp_path / "unsorted"
     reports = tmp_path / "reports"
@@ -11,10 +11,11 @@ def test_cli_dry_run_creates_full_report(tmp_path: Path):
     unsorted.mkdir()
     reports.mkdir()
 
-    source = unsorted / "IMG-20210914_203344.jpg"
+    nested = unsorted / "camera"
+    nested.mkdir()
+
+    source = nested / "IMG-20210914_203344.jpg"
     source.write_text("x", encoding="utf-8")
-    second = unsorted / "IMG-20210914_203344(1).jpg"
-    second.write_text("x", encoding="utf-8")
 
     config = tmp_path / "config.yaml"
     config.write_text(
@@ -25,8 +26,8 @@ paths:
   report_output: "{reports.as_posix()}"
 
 behavior:
-  dry_run: true
-  move_files: false
+  dry_run: false
+  move_files: true
   normalize_month_folders: true
 
 naming:
@@ -39,8 +40,8 @@ duplicates:
   mode: "report-only"
 
 reporting:
-  markdown: true
-  json: true
+  markdown: false
+  json: false
   verbose: false
 """,
         encoding="utf-8",
@@ -49,15 +50,6 @@ reporting:
     exit_code = main(["--config", str(config)])
     assert exit_code == 0
 
-    assert source.exists()
-    assert not any(archive.rglob("*"))
-
-    md_reports = list(reports.glob("*.md"))
-    json_reports = list(reports.glob("*.json"))
-    assert len(md_reports) == 1
-    assert len(json_reports) == 1
-
-    text = json_reports[0].read_text(encoding="utf-8")
-    assert '"action": "copy"' in text
-    assert '"performed": false' in text
-    assert "_01" in text
+    assert not nested.exists()
+    assert not source.exists()
+    assert any(archive.rglob("*.jpg"))

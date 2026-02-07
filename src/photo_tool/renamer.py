@@ -36,6 +36,10 @@ def _apply_collision_suffix(base_name: str, existing: Iterable[str]) -> str:
         index += 1
 
 
+def ensure_unique_name(*, original_name: str, existing_names: Iterable[str]) -> str:
+    return _apply_collision_suffix(original_name, existing_names)
+
+
 def generate_filename(
     *,
     original_name: str,

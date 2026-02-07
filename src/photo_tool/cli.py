@@ -8,10 +8,10 @@ from photo_tool.config import load_config, ConfigError, AppConfig
 from photo_tool.datetime_resolver import resolve_datetime
 from photo_tool.executor import execute_decision
 from photo_tool.month_normalizer import normalize_month_folder
-from photo_tool.renamer import generate_filename
+from photo_tool.renamer import ensure_unique_name, generate_filename
 from photo_tool.reporter import ExecutionResult, ReportConfig, build_report, write_reports
 from photo_tool.scanner import scan_directories
-from photo_tool.sorter import build_sort_decision
+from photo_tool.sorter import SortDecision, build_sort_decision
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -59,11 +59,26 @@ def _current_timestamp() -> str:
     return datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
 
-def run_pipeline(config: AppConfig, apply: bool) -> None:
+def _cleanup_empty_dirs(root: Path, candidates: set[Path]) -> None:
+    for directory in sorted(candidates, key=lambda p: len(p.parts), reverse=True):
+        if directory == root:
+            continue
+        try:
+            if directory.exists() and directory.is_dir() and not any(directory.iterdir()):
+                directory.rmdir()
+        except OSError:
+            continue
+
+
+def run_pipeline(config: AppConfig, apply: bool) -> tuple[Path | None, Path | None]:
     scan_result = scan_directories([config.paths.unsorted])
 
     planned_names: dict[Path, set[str]] = defaultdict(set)
     execution_results: list[ExecutionResult] = []
+
+    current_time = datetime.now()
+
+    cleanup_candidates: set[Path] = set()
 
     for info in scan_result.supported:
         resolution = resolve_datetime(
@@ -81,31 +96,49 @@ def run_pipeline(config: AppConfig, apply: bool) -> None:
         target_dir = config.paths.archive_root / f"{resolution.datetime.year:04d}" / month_folder
         existing_names = planned_names[target_dir]
 
-        canonical_name = generate_filename(
-            original_name=info.name,
-            resolved_datetime=resolution.datetime,
-            source=resolution.source,
-            existing_names=existing_names,
-        )
+        if config.naming.preserve_original_on_copy:
+            canonical_name = ensure_unique_name(
+                original_name=info.name,
+                existing_names=existing_names,
+            )
+        else:
+            canonical_name = generate_filename(
+                original_name=info.name,
+                resolved_datetime=resolution.datetime,
+                source=resolution.source,
+                existing_names=existing_names,
+            )
 
         planned_names[target_dir].add(canonical_name)
         target_path = target_dir / canonical_name
-        target_exists = target_path.exists()
 
-        decision = build_sort_decision(
-            archive_root=config.paths.archive_root,
-            source_path=info.absolute_path,
-            resolved_datetime=resolution.datetime,
-            month_folder=month_folder,
-            canonical_name=canonical_name,
-            move_files=config.behavior.move_files,
-            target_exists=target_exists,
-        )
+        if resolution.datetime > current_time:
+            decision = SortDecision(
+                source=info.absolute_path,
+                target_dir=target_dir,
+                target_path=target_path,
+                action="skip",
+                reason="future_date",
+            )
+        else:
+            target_exists = target_path.exists()
+            decision = build_sort_decision(
+                archive_root=config.paths.archive_root,
+                source_path=info.absolute_path,
+                resolved_datetime=resolution.datetime,
+                month_folder=month_folder,
+                canonical_name=canonical_name,
+                move_files=config.behavior.move_files,
+                target_exists=target_exists,
+            )
 
         performed = execute_decision(
             decision=decision,
             apply=apply,
         )
+
+        if performed and decision.action == "move":
+            cleanup_candidates.add(decision.source.parent)
 
         execution_results.append(
             ExecutionResult(decision=decision, performed=performed)
@@ -120,12 +153,17 @@ def run_pipeline(config: AppConfig, apply: bool) -> None:
         timestamp=_current_timestamp(),
     )
 
+    if apply and cleanup_candidates:
+        _cleanup_empty_dirs(config.paths.unsorted, cleanup_candidates)
+
     if config.reporting.markdown or config.reporting.json:
-        write_reports(
+        return write_reports(
             report=report,
             output_dir=config.paths.report_output,
             prefix="dry_run" if not apply else "apply",
         )
+
+    return None, None
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -143,11 +181,15 @@ def main(argv: list[str] | None = None) -> int:
             "No filesystem changes will be performed.",
             file=sys.stderr,
         )
-    apply = args.apply and not config.behavior.dry_run
-    run_pipeline(config, apply)
+    apply = (args.apply or not config.behavior.dry_run) and not config.behavior.dry_run
+    mode_label = "apply" if apply else "dry-run"
+    print(f"Starting photo-tool ({mode_label})")
 
-    print("Configuration loaded successfully.")
-    print(f"Dry-run mode: {config.behavior.dry_run and not args.apply}")
+    markdown_path, json_path = run_pipeline(config, apply)
+
+    if markdown_path and json_path:
+        print(f"Report written to: {markdown_path}")
+        print(f"Report written to: {json_path}")
 
     return 0
 

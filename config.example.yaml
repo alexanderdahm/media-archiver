@@ -6,17 +6,18 @@ paths:
 behavior:
   dry_run: true
   move_files: false
-  normalize_month_folders: true
+  normalize_month_folders: true # reserved, not active in v1.0
 
 naming:
-  month_format: "MM_Month"
-  filename_format: "YYYY-MM-DD_HH-mm-ss"
+  month_format: "MM_Month" # reserved, not active in v1.0
+  filename_format: "YYYY-MM-DD_HH-mm-ss" # reserved, not active in v1.0
+  preserve_original_on_copy: false # if true, keep original filename when copying
 
 duplicates:
-  detect: true
-  mode: "report-only"
+  detect: true # reserved, not active in v1.0
+  mode: "report-only" # reserved, not active in v1.0
 
 reporting:
   markdown: true # currently always enabled in v1.0
   json: true # currently always enabled in v1.0
-  verbose: true # reserved for future use
+  verbose: true # reserved, not active in v1.0

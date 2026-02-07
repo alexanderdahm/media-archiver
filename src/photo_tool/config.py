@@ -25,6 +25,7 @@ class BehaviorConfig:
 class NamingConfig:
     month_format: str
     filename_format: str
+    preserve_original_on_copy: bool
 
 
 @dataclass(frozen=True)
@@ -57,6 +58,12 @@ def _require(mapping: dict, key: str):
     return mapping[key]
 
 
+def _optional(mapping: dict, key: str, default):
+    if not isinstance(mapping, dict):
+        raise ConfigError("Invalid config structure: expected mapping")
+    return mapping.get(key, default)
+
+
 def load_config(path: Path) -> AppConfig:
     if not path.exists():
         raise ConfigError(f"Config file does not exist: {path}")
@@ -85,6 +92,9 @@ def load_config(path: Path) -> AppConfig:
         naming = NamingConfig(
             month_format=_require(raw["naming"], "month_format"),
             filename_format=_require(raw["naming"], "filename_format"),
+            preserve_original_on_copy=bool(
+                _optional(raw["naming"], "preserve_original_on_copy", False)
+            ),
         )
 
         duplicates = DuplicateConfig(

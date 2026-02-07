@@ -21,6 +21,7 @@ behavior:
 naming:
   month_format: "MM_MonthName"
   filename_format: "YYYY-MM-DD_HH-mm-ss_source"
+  preserve_original_on_copy: false
 
 duplicates:
   detect: true
