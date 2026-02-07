@@ -2,11 +2,26 @@
 
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 
 
-@dataclass
-class Photo:
-    path: Path
-    date: datetime | None = None
-    size: int | None = None
+class DateTimeSource(str, Enum):
+    EXIF = "exif"
+    FILENAME = "filename"
+    FILESYSTEM = "filesystem"
+
+
+class ConfidenceLevel(str, Enum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+@dataclass(frozen=True)
+class DateTimeResolution:
+    datetime: datetime
+    source: DateTimeSource
+    confidence: ConfidenceLevel
+
+
