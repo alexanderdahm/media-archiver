@@ -18,6 +18,6 @@ duplicates:
   mode: "report-only" # reserved, not active in v1.0
 
 reporting:
-  markdown: true # currently always enabled in v1.0
-  json: true # currently always enabled in v1.0
+  markdown: true # enables Markdown reports
+  json: true # enables JSON reports
   verbose: true # reserved, not active in v1.0
