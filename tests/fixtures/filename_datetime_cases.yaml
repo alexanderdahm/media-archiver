@@ -1,13 +1,32 @@
 cases:
-  - filename: "IMG-20170526-WA0009.jpg"
+  - name: whatsapp_android_image
+    filename: "IMG-20170526-WA0009.jpg"
     expected:
       datetime: "2017-05-26T00:00:00"
       source: "filename"
 
-  - filename: "VID_20210914_203344.mp4"
+  - name: android_video_full_timestamp
+    filename: "VID_20210914_203344.mp4"
     expected:
       datetime: "2021-09-14T20:33:44"
       source: "filename"
 
-  - filename: "DSC_0001.JPG"
+  - name: ios_live_photo
+    filename: "IMG_20230801_101530.HEIC"
+    expected:
+      datetime: "2023-08-01T10:15:30"
+      source: "filename"
+
+  - name: camera_file_without_date
+    filename: "CIMG5563.JPG"
     expected: null
+
+  - name: random_filename
+    filename: "final_edit_v2.jpg"
+    expected: null
+
+  - name: dash_separated_date
+    filename: "photo-2020-12-31.jpg"
+    expected:
+      datetime: "2020-12-31T00:00:00"
+      source: "filename"

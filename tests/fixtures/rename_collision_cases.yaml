@@ -1,6 +1,19 @@
 cases:
-  - base: "2019-06-01_12-00-00_exif.jpg"
+  - name: single_collision
+    base: "2019-06-01_12-00-00_exif.jpg"
+    existing:
+      - "2019-06-01_12-00-00_exif.jpg"
+    expected: "2019-06-01_12-00-00_exif_01.jpg"
+
+  - name: multiple_collisions
+    base: "2019-06-01_12-00-00_exif.jpg"
     existing:
       - "2019-06-01_12-00-00_exif.jpg"
       - "2019-06-01_12-00-00_exif_01.jpg"
-    expected: "2019-06-01_12-00-00_exif_02.jpg"
+      - "2019-06-01_12-00-00_exif_02.jpg"
+    expected: "2019-06-01_12-00-00_exif_03.jpg"
+
+  - name: no_collision
+    base: "2020-01-01_00-00-00_filename.jpg"
+    existing: []
+    expected: "2020-01-01_00-00-00_filename.jpg"

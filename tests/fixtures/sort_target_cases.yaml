@@ -1,6 +1,21 @@
 cases:
-  - datetime: "2021-08-03T19:11:44"
-    expected_path: "2021/08_August"
+  - name: summer_date
+    datetime: "2021-08-03T19:11:44"
+    expected:
+      year: "2021"
+      month_folder: "08_August"
+      relative_path: "2021/08_August"
 
-  - datetime: "2019-12-01T00:00:00"
-    expected_path: "2019/12_Dezember"
+  - name: winter_date
+    datetime: "2019-12-01T00:00:00"
+    expected:
+      year: "2019"
+      month_folder: "12_Dezember"
+      relative_path: "2019/12_Dezember"
+
+  - name: january_edge_case
+    datetime: "2020-01-01T00:00:01"
+    expected:
+      year: "2020"
+      month_folder: "01_Januar"
+      relative_path: "2020/01_Januar"
