@@ -22,8 +22,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
     parser.add_argument(
         "--config",
-        required=True,
-        help="Path to configuration YAML file",
+        help="Path to config.yaml (defaults to ./config.yaml or next to executable)",
     )
 
     parser.add_argument(
@@ -57,6 +56,28 @@ def _month_name_from_datetime(value: datetime) -> str:
 
 def _current_timestamp() -> str:
     return datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+
+
+def resolve_config_path(explicit: str | None) -> Path:
+    if explicit:
+        path = Path(explicit)
+        if not path.exists():
+            raise FileNotFoundError(f"Config not found: {path}")
+        return path
+
+    cwd_candidate = Path.cwd() / "config.yaml"
+    if cwd_candidate.exists():
+        return cwd_candidate
+
+    exe_dir = Path(sys.argv[0]).resolve().parent
+    exe_candidate = exe_dir / "config.yaml"
+    if exe_candidate.exists():
+        return exe_candidate
+
+    raise FileNotFoundError(
+        "No config.yaml found. Provide --config or place config.yaml "
+        "in the working directory or next to the executable."
+    )
 
 
 def _cleanup_empty_dirs(root: Path, candidates: set[Path]) -> None:
@@ -170,8 +191,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
 
     try:
-        config = load_config(Path(args.config))
-    except ConfigError as exc:
+        config_path = resolve_config_path(args.config)
+        config = load_config(config_path)
+    except (ConfigError, FileNotFoundError) as exc:
         print(f"Configuration error: {exc}", file=sys.stderr)
         return 1
 
