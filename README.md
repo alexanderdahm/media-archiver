@@ -69,6 +69,37 @@ Optional dev dependencies (tests, tooling):
 pip install -e .[dev]
 ```
 
+## Build Executable (PyInstaller)
+
+Build a single-file Windows executable using the dedicated `.venv-build` environment:
+
+1. Create and activate the build venv
+
+```powershell
+python -m venv .venv-build
+.venv-build\Scripts\activate
+```
+
+2. Install build dependencies
+
+```powershell
+pip install -e .
+pip install pyinstaller
+```
+
+3. Build the executable
+
+```powershell
+pyinstaller --onefile --name media-archiver --console bootstrap_media_archiver.py
+```
+
+The executable is written to:
+
+- `dist/media-archiver.exe`
+
+For running the executable without `--config`, place `config.yaml` next to the
+EXE or in the current working directory.
+
 ## Usage
 
 After installing the project, the CLI is available as `media-archiver`.

@@ -182,6 +182,8 @@ def run_pipeline(config: AppConfig, apply: bool) -> tuple[Path | None, Path | No
             report=report,
             output_dir=config.paths.report_output,
             prefix="dry_run" if not apply else "apply",
+            write_markdown=config.reporting.markdown,
+            write_json=config.reporting.json,
         )
 
     return None, None
@@ -209,8 +211,9 @@ def main(argv: list[str] | None = None) -> int:
 
     markdown_path, json_path = run_pipeline(config, apply)
 
-    if markdown_path and json_path:
+    if markdown_path:
         print(f"Report written to: {markdown_path}")
+    if json_path:
         print(f"Report written to: {json_path}")
 
     return 0

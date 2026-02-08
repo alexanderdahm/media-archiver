@@ -8,6 +8,7 @@ from media_archiver.reporter import (
     _ensure_unique_path,
     to_json,
     to_markdown,
+    write_reports,
 )
 from media_archiver.sorter import SortDecision
 
@@ -139,3 +140,43 @@ def test_ensure_unique_path_when_unused(tmp_path: Path):
     base = tmp_path / "report.json"
     result = _ensure_unique_path(base)
     assert result == base
+
+
+def test_write_reports_respects_format_flags(tmp_path: Path):
+    decision = _make_decision(
+        "D:/Photos/_unsorted/A.jpg",
+        "D:/Photos/2019/12_Dezember/A.jpg",
+        "copy",
+        None,
+    )
+    report = build_report(
+        results=[ExecutionResult(decision=decision, performed=False)],
+        config=ReportConfig(dry_run=True, move_files=False),
+        timestamp="2025-01-01T00-00-00",
+    )
+
+    markdown_path, json_path = write_reports(
+        report=report,
+        output_dir=tmp_path,
+        prefix="dry_run",
+        write_markdown=True,
+        write_json=False,
+    )
+
+    assert markdown_path is not None
+    assert json_path is None
+    assert markdown_path.exists()
+    assert not (tmp_path / "2025-01-01T00-00-00_dry_run.json").exists()
+
+    markdown_path, json_path = write_reports(
+        report=report,
+        output_dir=tmp_path,
+        prefix="apply",
+        write_markdown=False,
+        write_json=True,
+    )
+
+    assert markdown_path is None
+    assert json_path is not None
+    assert json_path.exists()
+    assert not (tmp_path / "2025-01-01T00-00-00_apply.md").exists()

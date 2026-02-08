@@ -192,15 +192,25 @@ def write_reports(
     report: Report,
     output_dir: Path,
     prefix: str = "report",
-) -> tuple[Path, Path]:
+    write_markdown: bool = True,
+    write_json: bool = True,
+) -> tuple[Path | None, Path | None]:
     # timestamp must be externally provided (no time generation here)
+    if not (write_markdown or write_json):
+        return None, None
+
     output_dir.mkdir(parents=True, exist_ok=True)
 
     base_name = f"{report.summary.timestamp}_{prefix}"
-    markdown_path = _ensure_unique_path(output_dir / f"{base_name}.md")
-    json_path = _ensure_unique_path(output_dir / f"{base_name}.json")
+    markdown_path: Path | None = None
+    json_path: Path | None = None
 
-    markdown_path.write_text(to_markdown(report), encoding="utf-8")
-    json_path.write_text(to_json(report), encoding="utf-8")
+    if write_markdown:
+        markdown_path = _ensure_unique_path(output_dir / f"{base_name}.md")
+        markdown_path.write_text(to_markdown(report), encoding="utf-8")
+
+    if write_json:
+        json_path = _ensure_unique_path(output_dir / f"{base_name}.json")
+        json_path.write_text(to_json(report), encoding="utf-8")
 
     return markdown_path, json_path
