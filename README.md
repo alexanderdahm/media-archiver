@@ -12,7 +12,7 @@ Before (unsorted, mixed filenames):
 archive_root/
    unsorted/
       IMG_0031.JPG
-      Urlaub_Italien_2023-07-12_173055.jpeg
+      Vacation_Italy_2023-07-12_173055.jpeg
       2022-11-05 08.22.10.mov
       VID_0007.MP4
       Screenshot_2021-01-03_12-11-09.png
@@ -155,7 +155,7 @@ Changes are only applied if:
 
 ---
 
-## 🧠 Entwickler-Hinweis (sehr empfohlen)
+## Development Note (recommended)
 
 ### Development Usage
 
@@ -201,7 +201,7 @@ decisions for dry-run and apply runs. In short:
    - EXIF DateTimeOriginal
    - Datetime parsed from filename
    - Filesystem modified timestamp (fallback)
-3. Normalize the month folder name to the canonical German format.
+3. Normalize the month folder name to the canonical format.
 4. Generate the canonical filename:
    `YYYY-MM-DD_HH-mm-ss.ext`
 5. Build the target path as:

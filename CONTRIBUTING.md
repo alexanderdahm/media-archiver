@@ -17,6 +17,16 @@ These rules are normative. Violations are considered bugs.
 
 ---
 
+## Language
+
+- English is mandatory for all code, comments, and documentation.
+- Do not introduce German identifiers, comments, or docstrings.
+- Keep wording clear, technical, and neutral.
+
+This ensures consistency and long-term maintainability.
+
+---
+
 ## 2. AI-Assisted Development Rules
 
 When using AI tools:

@@ -22,6 +22,20 @@ possible.
 - Offline-only: no network, cloud dependencies, or telemetry.
 - Configuration-driven: no hard-coded paths or magic constants.
 
+## Language Policy
+
+All source code, code comments, docstrings, configuration keys,
+error messages, and documentation files **must be written in English**.
+
+This rule is mandatory and applies to:
+- Python source files
+- Code comments and docstrings
+- Markdown documentation
+- CLI help texts and error messages
+- Configuration examples
+
+No German or mixed-language content is permitted in code or documentation.
+
 ## High-level Processing Flow
 
 1. Load configuration
@@ -59,9 +73,9 @@ Each step must be independently testable and observable.
 Month folders should follow a canonical, human-readable format, for example:
 
 ```
-01_Januar
-02_Februar
-12_Dezember
+01_January
+02_February
+12_December
 ```
 
 Filename canonical format:
